@@ -1,0 +1,9 @@
+{
+    "name": "Φ-Studio - Visualizador Universal",
+    "short_name": "Φ-Studio",
+    "description": "Do Universo à Sopa Primordial - Visualize todas as escalas da realidade",
+    "start_url": "/",
+    "display": "standalone",
+    "theme_color": "#0a0f1f",
+    "background_color": "#0a0f1f"
+}

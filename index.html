@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#0a0f1f">
+    <title>Φ-Studio | Do Universo à Sopa Primordial</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: radial-gradient(circle at 20% 30%, #0a0f1f, #03050b);
+            font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
+            color: #eef;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 1300px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { 
+            font-size: 1.8rem; 
+            background: linear-gradient(135deg, #ffd966, #ffaa33); 
+            -webkit-background-clip: text; 
+            background-clip: text; 
+            color: transparent; 
+        }
+        .header p { color: #aac; font-size: 0.85rem; margin-top: 5px; }
+        
+        .controls-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .control-group {
+            background: rgba(20, 30, 55, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 40px;
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid rgba(255,170,51,0.3);
+        }
+        .control-group label { color: #ffaa55; font-size: 0.8rem; font-weight: bold; }
+        .control-group input { width: 260px; cursor: pointer; }
+        .control-group span { color: #aaf; min-width: 140px; font-weight: bold; font-size: 0.8rem; }
+        button {
+            background: #ffaa33;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover { background: #ffcc66; transform: scale(1.02); }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 20px;
+        }
+        
+        .canvas-container {
+            background: #010008;
+            border-radius: 24px;
+            padding: 20px;
+            border: 1px solid #ffaa5544;
+            overflow: auto;
+            cursor: grab;
+            position: relative;
+            min-height: 550px;
+        }
+        .canvas-container:active { cursor: grabbing; }
+        canvas {
+            background: #010008;
+            border-radius: 16px;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .info-panel {
+            background: rgba(26, 26, 58, 0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 16px;
+            font-size: 0.7rem;
+            color: #aaf;
+            border-left: 3px solid #ffaa55;
+        }
+        .camadas-panel {
+            background: rgba(26, 26, 58, 0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 12px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .camada-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-left: 3px solid;
+            transition: 0.2s;
+        }
+        .camada-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        .camada-header:hover { background: rgba(255,255,255,0.05); }
+        .camada-nome { font-weight: bold; font-size: 0.85rem; }
+        .camada-toggle {
+            width: 32px;
+            height: 32px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            background: #2a2a4a;
+            color: white;
+            transition: 0.2s;
+        }
+        .camada-toggle.active { background: #ffaa33; color: #0a0f1f; }
+        .camada-desc { font-size: 0.65rem; color: #aaaaff; margin-top: 4px; display: none; }
+        .camada-desc.visible { display: block; }
+        .camada-escala { font-size: 0.6rem; color: #88aaff; margin-top: 4px; display: none; }
+        .camada-escala.visible { display: block; }
+        
+        .footer { text-align: center; font-size: 0.7rem; color: #79c; margin-top: 20px; padding-top: 10px; border-top: 1px solid #2a2a4a; }
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+            .control-group input { width: 180px; }
+            .control-group span { min-width: 100px; font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🌀 Φ-Studio | Do Universo à Sopa Primordial</h1>
+        <p>Zoom do centro do universo observável até as partículas elementares e flutuações quânticas</p>
+    </div>
+
+    <div class="controls-bar">
+        <div class="control-group">
+            <label>🔬 ZOOM CÓSMICO:</label>
+            <input type="range" id="zoomSlider" min="0" max="100" step="1" value="0">
+            <span id="zoomValue">🌌 0% - Universo Observável</span>
+        </div>
+        <div class="control-group">
+            <button onclick="resetZoom()">⟳ Resetar Zoom</button>
+        </div>
+    </div>
+
+    <div class="main-grid">
+        <div class="canvas-container" id="canvasContainer">
+            <canvas id="estruturaCanvas" width="700" height="700"></canvas>
+        </div>
+        
+        <div>
+            <div class="info-panel" id="infoPanel">
+                <strong>🌌 CENTRO DO UNIVERSO OBSERVÁVEL</strong><br>
+                📍 Posição: Centro cósmico<br>
+                📐 Escala: 10²⁶ m (93 bilhões anos-luz)<br>
+                🔍 Use o Zoom Cósmico para explorar
+            </div>
+            <div class="camadas-panel" id="camadasPanel">
+                <div style="color:#88aaff; text-align:center; padding:20px;">Carregando estrutura cósmica...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <span>🔬 Fórmula Φ (φ = 1.618034) | Zoom Cósmico: Universo → Galáxias → Sistema Solar → Planeta → Molécula → Átomo → Partículas → Sopa Primordial</span>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const PHI = 1.618033988749895;
+        let canvas, ctx;
+        let currentZoom = 0;
+        let camadasVisivei_s = [];
+        let panX = 0, panY = 0;
+        let isDragging = false;
+        let dragStart = { x: 0, y: 0 };
+        
+        const estruturaCosmica = {
+            nome: "🌌 CENTRO DO UNIVERSO OBSERVÁVEL",
+            descricao: "O ponto central do cosmos",
+            camadas: [
+                { nivel: 0, zoom_min: 0, zoom_max: 10, nome: "🌌 Universo Observável", raio: 1.0, cor: "#aa88ff", desc: "93 bilhões anos-luz | 2 trilhões de galáxias", escala: "10²⁶ m", detalhes: ["Radiação Cósmica de Fundo", "Expansão acelerada", "Energia escura: 68%"] },
+                { nivel: 1, zoom_min: 10, zoom_max: 25, nome: "🌠 Superaglomerados", raio: 0.85, cor: "#88ccff", desc: "Laniakea | 100.000 galáxias", escala: "10²⁴ m", detalhes: ["Fitas de galáxias", "Vazios cósmicos", "Matéria escura: 27%"] },
+                { nivel: 2, zoom_min: 25, zoom_max: 40, nome: "🌀 Galáxias Espirais", raio: 0.7, cor: "#55ffaa", desc: "Via Láctea | Braços espirais seguindo φ", escala: "10²¹ m", detalhes: ["Proporção áurea", "Buraco negro central"] },
+                { nivel: 3, zoom_min: 40, zoom_max: 55, nome: "⭐ Sistemas Estelares", raio: 0.55, cor: "#ffcc88", desc: "Sistema Solar", escala: "10¹³ m", detalhes: ["Sol", "Planetas internos e externos"] },
+                { nivel: 4, zoom_min: 55, zoom_max: 70, nome: "🌍 Planetas", raio: 0.42, cor: "#88ffaa", desc: "Terra | Estrutura geológica", escala: "10⁷ m", detalhes: ["Atmosfera", "Crosta", "Manto", "Núcleo"] },
+                { nivel: 5, zoom_min: 70, zoom_max: 82, nome: "🧬 Seres Vivos", raio: 0.3, cor: "#ffaa55", desc: "Corpo humano | Células", escala: "10⁰ m", detalhes: ["Órgãos", "Tecidos", "Células"] },
+                { nivel: 6, zoom_min: 82, zoom_max: 90, nome: "⚛️ Moléculas e Átomos", raio: 0.18, cor: "#55ff55", desc: "DNA | Estrutura atômica", escala: "10⁻⁹ m", detalhes: ["Ligações covalentes", "Núcleo atômico"] },
+                { nivel: 7, zoom_min: 90, zoom_max: 96, nome: "🔬 Partículas Elementares", raio: 0.08, cor: "#ff5555", desc: "Quarks | Elétrons", escala: "10⁻¹⁵ m", detalhes: ["Quarks up/down", "Força nuclear forte"] },
+                { nivel: 8, zoom_min: 96, zoom_max: 100, nome: "🌀 SOPA PRIMORDIAL", raio: 0.02, cor: "#ffaa33", desc: "Flutuações quânticas do vácuo", escala: "10⁻³⁵ m", detalhes: ["Emaranhamento quântico", "Campo unificado"] }
+            ]
+        };
+        
+        function getNivelAtual() {
+            for (let i = estruturaCosmica.camadas.length - 1; i >= 0; i--) {
+                if (currentZoom >= estruturaCosmica.camadas[i].zoom_min) return estruturaCosmica.camadas[i];
+            }
+            return estruturaCosmica.camadas[0];
+        }
+        
+        function redesenhar() {
+            if (!ctx) return;
+            const centerX = 350 + panX;
+            const centerY = 350 + panY;
+            const raioMax = 280;
+            
+            ctx.clearRect(0, 0, 700, 700);
+            ctx.fillStyle = "#010008";
+            ctx.fillRect(0, 0, 700, 700);
+            
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 6, 0, 2 * Math.PI);
+            ctx.fillStyle = "#ffaa55";
+            ctx.fill();
+            ctx.fillStyle = "#ffaa55";
+            ctx.font = "bold 11px monospace";
+            ctx.fillText(estruturaCosmica.nome, centerX + 10, centerY - 6);
+            
+            for (let i = 0; i < estruturaCosmica.camadas.length; i++) {
+                const cam = estruturaCosmica.camadas[i];
+                const zoomAtivo = (currentZoom >= cam.zoom_min && currentZoom <= cam.zoom_max);
+                if (zoomAtivo && camadasVisivei_s[i] !== false) {
+                    const t = (currentZoom - cam.zoom_min) / (cam.zoom_max - cam.zoom_min);
+                    let raio = raioMax * cam.raio * (0.4 + t * 0.6);
+                    raio = Math.max(8, Math.min(raioMax - 10, raio));
+                    
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, raio, 0, 2 * Math.PI);
+                    ctx.strokeStyle = cam.cor;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    ctx.fillStyle = cam.cor + "22";
+                    ctx.fill();
+                    
+                    ctx.font = `bold ${Math.max(10, Math.min(13, raio / 10))}px 'Segoe UI'`;
+                    ctx.fillStyle = cam.cor;
+                    ctx.fillText(cam.nome, centerX + raio + 8, centerY - 5);
+                    ctx.font = `italic 9px monospace`;
+                    ctx.fillStyle = "#aaaaff";
+                    ctx.fillText(cam.escala, centerX - raio - 70, centerY + 5);
+                }
+            }
+            
+            const nivel = getNivelAtual();
+            ctx.font = "bold 9px monospace";
+            ctx.fillStyle = "#ffdd99";
+            ctx.fillText(`📡 ${nivel.nome} | Zoom: ${Math.round(currentZoom)}% | φ = ${PHI.toFixed(6)}`, 15, 25);
+            ctx.font = "8px monospace";
+            ctx.fillStyle = "#88aaff";
+            ctx.fillText(`🖱️ Arraste para mover`, 15, 45);
+        }
+        
+        function renderizarCamadasPanel() {
+            const panel = document.getElementById('camadasPanel');
+            panel.innerHTML = '';
+            estruturaCosmica.camadas.forEach((cam, idx) => {
+                const div = document.createElement('div');
+                div.className = 'camada-item';
+                div.style.borderLeftColor = cam.cor;
+                const isVisible = camadasVisivei_s[idx] !== false;
+                div.innerHTML = `
+                    <div class="camada-header">
+                        <span class="camada-nome" style="color:${cam.cor};">${cam.nome}</span>
+                        <button class="camada-toggle ${isVisible ? 'active' : ''}" data-idx="${idx}">${isVisible ? '👁️' : '🔘'}</button>
+                    </div>
+                    <div class="camada-desc" id="desc-${idx}">${cam.desc}</div>
+                    <div class="camada-escala" id="escala-${idx}">📏 Escala: ${cam.escala} | Zoom: ${cam.zoom_min}%-${cam.zoom_max}%</div>
+                `;
+                const toggleBtn = div.querySelector('.camada-toggle');
+                toggleBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    camadasVisivei_s[idx] = !camadasVisivei_s[idx];
+                    toggleBtn.classList.toggle('active', camadasVisivei_s[idx]);
+                    toggleBtn.textContent = camadasVisivei_s[idx] ? '👁️' : '🔘';
+                    redesenhar();
+                };
+                const header = div.querySelector('.camada-header');
+                header.onclick = () => {
+                    document.getElementById(`desc-${idx}`).classList.toggle('visible');
+                    document.getElementById(`escala-${idx}`).classList.toggle('visible');
+                };
+                panel.appendChild(div);
+            });
+            const nivel = getNivelAtual();
+            document.getElementById('infoPanel').innerHTML = `<strong>🔬 ${nivel.nome}</strong><br>📍 ${nivel.desc}<br>📐 Escala: ${nivel.escala}<br>🔍 Zoom: ${Math.round(currentZoom)}% (0%=Universo, 100%=Sopa)<br>💡 ${nivel.detalhes.join(' | ')}`;
+        }
+        
+        function atualizarZoom() {
+            currentZoom = parseFloat(document.getElementById('zoomSlider').value);
+            const nivel = getNivelAtual();
+            document.getElementById('zoomValue').innerHTML = `${Math.round(currentZoom)}% - ${nivel.nome}`;
+            renderizarCamadasPanel();
+            redesenhar();
+        }
+        
+        window.resetZoom = function() {
+            document.getElementById('zoomSlider').value = '0';
+            currentZoom = 0;
+            panX = 0; panY = 0;
+            atualizarZoom();
+        };
+        
+        function initPan() {
+            const container = document.getElementById('canvasContainer');
+            container.onmousedown = (e) => {
+                isDragging = true;
+                dragStart = { x: e.clientX - panX, y: e.clientY - panY };
+                container.style.cursor = 'grabbing';
+            };
+            window.onmousemove = (e) => {
+                if (!isDragging) return;
+                panX = e.clientX - dragStart.x;
+                panY = e.clientY - dragStart.y;
+                redesenhar();
+            };
+            window.onmouseup = () => {
+                isDragging = false;
+                container.style.cursor = 'grab';
+            };
+        }
+        
+        canvas = document.getElementById('estruturaCanvas');
+        ctx = canvas.getContext('2d');
+        canvas.width = 700;
+        canvas.height = 700;
+        camadasVisivei_s = new Array(estruturaCosmica.camadas.length).fill(true);
+        
+        document.getElementById('zoomSlider').oninput = atualizarZoom;
+        initPan();
+        atualizarZoom();
+    })();
+</script>
+</body>
+</html>
