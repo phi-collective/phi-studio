@@ -1,40 +1,32 @@
-# Φ-Studio | Do Universo à Sopa Primordial
+# ◈ Φ-SCOPE | Motor de Inovação Automático
 
-## 🔬 O que é?
+[![Licença GPL-3.0](https://img.shields.io/badge/License-GPL%203.0-blue.svg)](LICENSE)
 
-Uma ferramenta interativa que permite navegar por todas as escalas da realidade, desde o centro do universo observável até as flutuações quânticas do vácuo (sopa primordial).
+## 🔬 Sobre o Projeto
 
-## 🎮 Como usar
+**Φ-SCOPE** é uma ferramenta interativa que aplica a **Fórmula Φ (Proporção Áurea = 1.618)** para analisar automaticamente qualquer domínio de inovação e gerar:
 
-1. Mova o slider **ZOOM CÓSMICO** de 0% a 100%
-2. Cada nível de zoom revela uma nova camada da realidade
-3. Clique nos nomes das camadas para ver detalhes
-4. Use o botão 👁️/🔘 para ativar/desativar camadas
-5. Arraste o mouse para movimentar a visualização
+- 📡 **Objeto analisado** com descrição fundamental
+- 🌀 **4 Padrões Φ detectados** (Espiral, Funil, Quadrado, Emaranhamento)
+- 📋 **8 Critérios de Inovação** (Escala, Recursão, Híbrido, Consciência, Dados, Causalidade, Relevância, Empírico)
+- 🚀 **Projeto Revolucionário** com componentes e passo a passo
+- 📖 **Referência Wikipedia** (busca automática)
+- 📊 **Score de Inovação Φ** (0-100%)
 
-## 📊 Níveis de zoom
+## 🎯 Domínios Analisados
 
-| Zoom | Escala | O que aparece |
-|------|--------|---------------|
-| 0-10% | 10²⁶ m | Universo Observável |
-| 10-25% | 10²⁴ m | Superaglomerados de Galáxias |
-| 25-40% | 10²¹ m | Galáxias Espirais |
-| 40-55% | 10¹³ m | Sistemas Estelares |
-| 55-70% | 10⁷ m | Planetas |
-| 70-82% | 10⁰ m | Seres Vivos |
-| 82-90% | 10⁻⁹ m | Moléculas e Átomos |
-| 90-96% | 10⁻¹⁵ m | Partículas Elementares |
-| 96-100% | 10⁻³⁵ m | Sopa Primordial |
+| Domínio | Score | Status |
+|---------|-------|--------|
+| ⚡ Energia | 92% | ✅ Completo |
+| 🧬 Saúde | 94% | ✅ Completo |
+| 🚗 Transporte | 88% | ✅ Completo |
+| 🔍 Genérico | 75% | 🟡 Fallback |
 
-## 🛠️ Tecnologias
+## 🛠️ Como Usar
 
-- HTML5 / CSS3 / JavaScript
-- Canvas API
-- Fórmula Φ (φ = 1.618034)
+1. Acesse o [Φ-SCOPE Online](https://seu-usuario.github.io/phi-studio/)
+2. Digite um tema no campo de busca (ex: "energia", "saúde", "transporte")
+3. Clique em **"🔬 ANALISAR"**
+4. Explore os resultados gerados automaticamente
 
-## 📂 Instalação Local
-
-```bash
-git clone https://github.com/phi-collective/phi-studio.git
-cd phi-studio
-# Abra o arquivo index.html no navegador
+## 📐 A Fórmula Φ

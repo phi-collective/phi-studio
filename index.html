@@ -3,347 +3,560 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <meta name="theme-color" content="#0a0f1f">
-    <title>Φ-Studio | Do Universo à Sopa Primordial</title>
+    <title>Φ-SCOPE | Motor de Inovação Automático</title>
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: radial-gradient(circle at 20% 30%, #0a0f1f, #03050b);
-            font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
-            color: #eef;
-            padding: 20px;
-            min-height: 100vh;
+            background: #03050b;
+            font-family: 'Inter', monospace;
+            color: #00ffaa;
+            overflow-x: hidden;
         }
-        .container { max-width: 1300px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 20px; }
-        .header h1 { 
-            font-size: 1.8rem; 
-            background: linear-gradient(135deg, #ffd966, #ffaa33); 
-            -webkit-background-clip: text; 
-            background-clip: text; 
-            color: transparent; 
-        }
-        .header p { color: #aac; font-size: 0.85rem; margin-top: 5px; }
         
-        .controls-bar {
+        .header {
+            background: linear-gradient(135deg, #0a0f1f, #03050b);
+            border-bottom: 1px solid #00ffaa33;
+            padding: 10px 25px;
             display: flex;
+            justify-content: space-between;
+            align-items: center;
             flex-wrap: wrap;
-            gap: 15px;
-            justify-content: center;
+            gap: 10px;
+        }
+        .logo h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #00ffaa;
+            letter-spacing: 2px;
+        }
+        .logo p {
+            font-size: 0.55rem;
+            color: #00ffaa88;
+            letter-spacing: 1px;
+        }
+        .status-badge {
+            background: rgba(0,255,170,0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            border: 1px solid #00ffaa44;
+        }
+        
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        .search-area {
+            background: rgba(0, 10, 20, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 60px;
+            border: 1px solid #00ffaa33;
+            padding: 5px 20px;
+            display: flex;
+            gap: 12px;
             margin-bottom: 20px;
         }
-        .control-group {
-            background: rgba(20, 30, 55, 0.7);
-            backdrop-filter: blur(12px);
-            border-radius: 40px;
-            padding: 8px 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border: 1px solid rgba(255,170,51,0.3);
-        }
-        .control-group label { color: #ffaa55; font-size: 0.8rem; font-weight: bold; }
-        .control-group input { width: 260px; cursor: pointer; }
-        .control-group span { color: #aaf; min-width: 140px; font-weight: bold; font-size: 0.8rem; }
-        button {
-            background: #ffaa33;
+        .search-area input {
+            flex: 1;
+            background: transparent;
             border: none;
-            padding: 8px 20px;
+            color: #00ffaa;
+            font-size: 0.9rem;
+            padding: 14px 0;
+            outline: none;
+            font-family: monospace;
+        }
+        .search-area input::placeholder {
+            color: #00ffaa44;
+        }
+        .search-area button {
+            background: linear-gradient(135deg, #00ffaa22, #00ffaa11);
+            border: 1px solid #00ffaa;
+            padding: 8px 28px;
             border-radius: 40px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
-        }
-        button:hover { background: #ffcc66; transform: scale(1.02); }
-        
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 280px;
-            gap: 20px;
-        }
-        
-        .canvas-container {
-            background: #010008;
-            border-radius: 24px;
-            padding: 20px;
-            border: 1px solid #ffaa5544;
-            overflow: auto;
-            cursor: grab;
-            position: relative;
-            min-height: 550px;
-        }
-        .canvas-container:active { cursor: grabbing; }
-        canvas {
-            background: #010008;
-            border-radius: 16px;
-            display: block;
-            margin: 0 auto;
-        }
-        
-        .info-panel {
-            background: rgba(26, 26, 58, 0.9);
-            backdrop-filter: blur(8px);
-            border-radius: 16px;
-            padding: 12px;
-            margin-bottom: 16px;
-            font-size: 0.7rem;
-            color: #aaf;
-            border-left: 3px solid #ffaa55;
-        }
-        .camadas-panel {
-            background: rgba(26, 26, 58, 0.9);
-            backdrop-filter: blur(8px);
-            border-radius: 16px;
-            padding: 12px;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-        .camada-item {
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 10px;
-            margin-bottom: 8px;
-            border-left: 3px solid;
-            transition: 0.2s;
-        }
-        .camada-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-        }
-        .camada-header:hover { background: rgba(255,255,255,0.05); }
-        .camada-nome { font-weight: bold; font-size: 0.85rem; }
-        .camada-toggle {
-            width: 32px;
-            height: 32px;
-            border-radius: 20px;
-            border: none;
-            cursor: pointer;
+            font-family: monospace;
             font-size: 0.8rem;
-            background: #2a2a4a;
-            color: white;
-            transition: 0.2s;
+            color: #00ffaa;
         }
-        .camada-toggle.active { background: #ffaa33; color: #0a0f1f; }
-        .camada-desc { font-size: 0.65rem; color: #aaaaff; margin-top: 4px; display: none; }
-        .camada-desc.visible { display: block; }
-        .camada-escala { font-size: 0.6rem; color: #88aaff; margin-top: 4px; display: none; }
-        .camada-escala.visible { display: block; }
+        .search-area button:hover {
+            background: #00ffaa22;
+            text-shadow: 0 0 5px #00ffaa;
+        }
         
-        .footer { text-align: center; font-size: 0.7rem; color: #79c; margin-top: 20px; padding-top: 10px; border-top: 1px solid #2a2a4a; }
-        @media (max-width: 900px) {
-            .main-grid { grid-template-columns: 1fr; }
-            .control-group input { width: 180px; }
-            .control-group span { min-width: 100px; font-size: 0.7rem; }
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .card {
+            background: rgba(0, 10, 20, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid #00ffaa33;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .card-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #00ffaa;
+            margin-bottom: 10px;
+            border-left: 2px solid #00ffaa;
+            padding-left: 10px;
+            letter-spacing: 1px;
+        }
+        .card-content {
+            font-size: 0.65rem;
+            line-height: 1.5;
+            color: #ccffdd;
+            font-family: monospace;
+        }
+        
+        .criterio-item {
+            background: rgba(0,255,170,0.05);
+            border-radius: 6px;
+            padding: 8px;
+            margin-bottom: 6px;
+            border-left: 2px solid;
+        }
+        .criterio-nome {
+            font-weight: bold;
+            font-size: 0.7rem;
+        }
+        .criterio-desc {
+            font-size: 0.6rem;
+            color: #88ffcc;
+            margin-top: 3px;
+        }
+        
+        .projeto-card {
+            background: rgba(0, 255, 170, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #00ffaa44;
+        }
+        .projeto-titulo {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #00ffaa;
+        }
+        .projeto-desc {
+            font-size: 0.6rem;
+            color: #ccffdd;
+            margin-top: 5px;
+        }
+        .projeto-componentes {
+            font-size: 0.55rem;
+            color: #88ffcc;
+            margin-top: 8px;
+            padding-top: 5px;
+            border-top: 1px solid #00ffaa33;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 0.5rem;
+            color: #00ffaa66;
+            border-top: 1px solid #00ffaa22;
+            margin-top: 20px;
+        }
+        
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+            gap: 15px;
+            display: none;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #00ffaa;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        @media (max-width: 800px) {
+            .result-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-<div class="container">
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div style="color:#00ffaa;">ANALISANDO COM FÓRMULA Φ...</div>
+    </div>
+    
     <div class="header">
-        <h1>🌀 Φ-Studio | Do Universo à Sopa Primordial</h1>
-        <p>Zoom do centro do universo observável até as partículas elementares e flutuações quânticas</p>
-    </div>
-
-    <div class="controls-bar">
-        <div class="control-group">
-            <label>🔬 ZOOM CÓSMICO:</label>
-            <input type="range" id="zoomSlider" min="0" max="100" step="1" value="0">
-            <span id="zoomValue">🌌 0% - Universo Observável</span>
+        <div class="logo">
+            <h1>◈ Φ-SCOPE | INNOVATION ENGINE ◈</h1>
+            <p>ANÁLISE AUTOMÁTICA | 8 CRITÉRIOS | PROJETO PRONTO</p>
         </div>
-        <div class="control-group">
-            <button onclick="resetZoom()">⟳ Resetar Zoom</button>
+        <div class="status-badge">
+            ⚡ FÓRMULA Φ APLICADA
         </div>
     </div>
-
-    <div class="main-grid">
-        <div class="canvas-container" id="canvasContainer">
-            <canvas id="estruturaCanvas" width="700" height="700"></canvas>
+    
+    <div class="container">
+        <div class="search-area">
+            <input type="text" id="searchInput" placeholder="Digite o que você quer inovar: energia, saúde, transporte, educação, comunicação, agricultura..." value="energia">
+            <button onclick="analisar()">🔬 ANALISAR</button>
         </div>
         
-        <div>
-            <div class="info-panel" id="infoPanel">
-                <strong>🌌 CENTRO DO UNIVERSO OBSERVÁVEL</strong><br>
-                📍 Posição: Centro cósmico<br>
-                📐 Escala: 10²⁶ m (93 bilhões anos-luz)<br>
-                🔍 Use o Zoom Cósmico para explorar
+        <div class="result-grid" id="resultGrid">
+            <div>
+                <div class="card">
+                    <div class="card-title">📡 OBJETO ANALISADO</div>
+                    <div class="card-content" id="infoContent">Aguardando pesquisa...</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">🌀 PADRÕES Φ DETECTADOS</div>
+                    <div class="card-content" id="padroesContent">Aguardando pesquisa...</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">📋 8 CRITÉRIOS DE INOVAÇÃO</div>
+                    <div class="card-content" id="criteriosContent">Aguardando pesquisa...</div>
+                </div>
             </div>
-            <div class="camadas-panel" id="camadasPanel">
-                <div style="color:#88aaff; text-align:center; padding:20px;">Carregando estrutura cósmica...</div>
+            
+            <div>
+                <div class="card">
+                    <div class="card-title">🚀 PROJETO REVOLUCIONÁRIO</div>
+                    <div class="card-content" id="projetoContent">Aguardando pesquisa...</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">📖 REFERÊNCIA WIKIPEDIA</div>
+                    <div class="card-content" id="wikiContent">Aguardando pesquisa...</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">📊 SCORE DE INOVAÇÃO</div>
+                    <div class="card-content" id="scoreContent">Aguardando pesquisa...</div>
+                </div>
             </div>
         </div>
+        
+        <div class="footer">
+            ◈ FÓRMULA Φ (φ = 1.618034) | 8 CRITÉRIOS: Escala | Recursão | Híbrido | Consciência | Dados | Causalidade | Relevância | Empírico ◈
+        </div>
     </div>
-
-    <div class="footer">
-        <span>🔬 Fórmula Φ (φ = 1.618034) | Zoom Cósmico: Universo → Galáxias → Sistema Solar → Planeta → Molécula → Átomo → Partículas → Sopa Primordial</span>
-    </div>
-</div>
-
-<script>
-    (function() {
+    
+    <script>
         const PHI = 1.618033988749895;
-        let canvas, ctx;
-        let currentZoom = 0;
-        let camadasVisivei_s = [];
-        let panX = 0, panY = 0;
-        let isDragging = false;
-        let dragStart = { x: 0, y: 0 };
         
-        const estruturaCosmica = {
-            nome: "🌌 CENTRO DO UNIVERSO OBSERVÁVEL",
-            descricao: "O ponto central do cosmos",
-            camadas: [
-                { nivel: 0, zoom_min: 0, zoom_max: 10, nome: "🌌 Universo Observável", raio: 1.0, cor: "#aa88ff", desc: "93 bilhões anos-luz | 2 trilhões de galáxias", escala: "10²⁶ m", detalhes: ["Radiação Cósmica de Fundo", "Expansão acelerada", "Energia escura: 68%"] },
-                { nivel: 1, zoom_min: 10, zoom_max: 25, nome: "🌠 Superaglomerados", raio: 0.85, cor: "#88ccff", desc: "Laniakea | 100.000 galáxias", escala: "10²⁴ m", detalhes: ["Fitas de galáxias", "Vazios cósmicos", "Matéria escura: 27%"] },
-                { nivel: 2, zoom_min: 25, zoom_max: 40, nome: "🌀 Galáxias Espirais", raio: 0.7, cor: "#55ffaa", desc: "Via Láctea | Braços espirais seguindo φ", escala: "10²¹ m", detalhes: ["Proporção áurea", "Buraco negro central"] },
-                { nivel: 3, zoom_min: 40, zoom_max: 55, nome: "⭐ Sistemas Estelares", raio: 0.55, cor: "#ffcc88", desc: "Sistema Solar", escala: "10¹³ m", detalhes: ["Sol", "Planetas internos e externos"] },
-                { nivel: 4, zoom_min: 55, zoom_max: 70, nome: "🌍 Planetas", raio: 0.42, cor: "#88ffaa", desc: "Terra | Estrutura geológica", escala: "10⁷ m", detalhes: ["Atmosfera", "Crosta", "Manto", "Núcleo"] },
-                { nivel: 5, zoom_min: 70, zoom_max: 82, nome: "🧬 Seres Vivos", raio: 0.3, cor: "#ffaa55", desc: "Corpo humano | Células", escala: "10⁰ m", detalhes: ["Órgãos", "Tecidos", "Células"] },
-                { nivel: 6, zoom_min: 82, zoom_max: 90, nome: "⚛️ Moléculas e Átomos", raio: 0.18, cor: "#55ff55", desc: "DNA | Estrutura atômica", escala: "10⁻⁹ m", detalhes: ["Ligações covalentes", "Núcleo atômico"] },
-                { nivel: 7, zoom_min: 90, zoom_max: 96, nome: "🔬 Partículas Elementares", raio: 0.08, cor: "#ff5555", desc: "Quarks | Elétrons", escala: "10⁻¹⁵ m", detalhes: ["Quarks up/down", "Força nuclear forte"] },
-                { nivel: 8, zoom_min: 96, zoom_max: 100, nome: "🌀 SOPA PRIMORDIAL", raio: 0.02, cor: "#ffaa33", desc: "Flutuações quânticas do vácuo", escala: "10⁻³⁵ m", detalhes: ["Emaranhamento quântico", "Campo unificado"] }
-            ]
+        const analysisMap = {
+            "energia": {
+                titulo: "⚡ ENERGIA",
+                descricao: "Campo fundamental que permeia todas as escalas do universo.",
+                padroes: [
+                    "🌀 ESPIRAL (∞): A energia segue padrões espirais - desde partículas quânticas até galáxias espirais",
+                    "📐 FUNIL (∇): Pontos de mínimo de energia revelam estados de equilíbrio e transições de fase",
+                    "⬛ QUADRADO: Simetria das leis da termodinâmica (1ª e 2ª leis) mostra dualidade fundamental",
+                    "🔗 EMARANHAMENTO: Energia escura (68% do universo) e energia comum estão emaranhadas na expansão cósmica"
+                ],
+                criterios: {
+                    escala: { status: "✅", texto: "Universal: Do quark (10⁻¹⁵m) ao universo observável (10²⁶m)", cor: "#55ff55" },
+                    recursao: { status: "✅", texto: "Auto-similar: Oscilações eletromagnéticas seguem padrões φ em todas as frequências", cor: "#55ff55" },
+                    hibrido: { status: "✅", texto: "Quântico-clássico: Fusão de energia de ponto zero com energia convencional", cor: "#55ff55" },
+                    consciencia: { status: "🟡", texto: "Agência: Sistemas podem aprender a otimizar consumo baseado em padrões", cor: "#ffaa55" },
+                    dados: { status: "✅", texto: "Baixa dependência: Padrões φ permitem predição com poucas amostras", cor: "#55ff55" },
+                    causalidade: { status: "✅", texto: "Consistente: Leis da termodinâmica são invioláveis", cor: "#55ff55" },
+                    relevancia: { status: "✅", texto: "Transversal: Impacta saúde, transporte, computação, sociedade", cor: "#55ff55" },
+                    empirico: { status: "✅", texto: "Testável: Experimentos de Cavendish, Faraday, Tesla são replicáveis", cor: "#55ff55" }
+                },
+                projeto: {
+                    nome: "GERADOR Φ DE PONTO ZERO",
+                    descricao: "Dispositivo que captura energia das flutuações quânticas do vácuo usando ressonância na frequência âncora (1.369 GHz) e geometria espiral áurea.",
+                    componentes: [
+                        "Bobina primária: 5 espiras (fio 1.5mm) em espiral logarítmica",
+                        "Bobina secundária: 8 espiras (proporção áurea 1:1.618)",
+                        "Capacitor ressonante: 0.1µF / 1000V",
+                        "Flyback de TV CRT (fonte de alta tensão)",
+                        "ESP32-S3 para controle e monitoramento",
+                        "Antena em espiral áurea para captação de vácuo"
+                    ],
+                    passos: [
+                        "1. Enrole a bobina primária seguindo a espiral logarítmica (r = a·e^{bθ})",
+                        "2. Enrole a bobina secundária com 8 espiras na proporção áurea",
+                        "3. Monte o capacitor em paralelo com o primário",
+                        "4. Conecte o flyback e ajuste o spark gap",
+                        "5. Programe o ESP32 para modular na frequência 1.369 GHz",
+                        "6. Meça a tensão de saída e ajuste a ressonância"
+                    ]
+                },
+                score: 92
+            },
+            "saúde": {
+                titulo: "🧬 SAÚDE E MEDICINA",
+                descricao: "Bem-estar humano em múltiplas escalas - molecular, celular, orgânico, populacional.",
+                padroes: [
+                    "🌀 ESPIRAL (∞): DNA (dupla hélice) segue padrão φ, proteínas se dobram em espirais logarítmicas",
+                    "📐 FUNIL (∇): Homeostase é um ponto de equilíbrio dinâmico regulado por feedback loops",
+                    "⬛ QUADRADO: Simetria bilateral do corpo humano quebra em órgãos únicos (coração, fígado)",
+                    "🔗 EMARANHAMENTO: Conexão mente-corpo via sistema nervoso e campos bioeletromagnéticos"
+                ],
+                criterios: {
+                    escala: { status: "✅", texto: "Universal: Do átomo (medicina nuclear) à população (epidemiologia)", cor: "#55ff55" },
+                    recursao: { status: "✅", texto: "Auto-similar: Inflamação se manifesta igual em célula, tecido e órgão", cor: "#55ff55" },
+                    hibrido: { status: "✅", texto: "Bio-digital: Fusão de diagnóstico por IA com tratamento biológico", cor: "#55ff55" },
+                    consciencia: { status: "✅", texto: "Agência: Sistemas de saúde preditiva com intervenção autônoma", cor: "#55ff55" },
+                    dados: { status: "✅", texto: "Baixa dependência: Padrões φ identificam doenças com poucos biomarcadores", cor: "#55ff55" },
+                    causalidade: { status: "✅", texto: "Consistente: Relação causa-efeito em patologias é bem estabelecida", cor: "#55ff55" },
+                    relevancia: { status: "✅", texto: "Transversal: Conecta biologia, química, física, ciência de dados", cor: "#55ff55" },
+                    empirico: { status: "✅", texto: "Testável: Ensaios clínicos randomizados são o padrão ouro", cor: "#55ff55" }
+                },
+                projeto: {
+                    nome: "DIAGNOSTICADOR Φ POR CAMPOS MAGNÉTICOS",
+                    descricao: "Dispositivo não invasivo que detecta alterações no campo bioeletromagnético do corpo, identificando doenças antes dos sintomas.",
+                    componentes: [
+                        "Sensor Hall de alta sensibilidade (SS49E ou similar)",
+                        "Bobina de detecção com 1000 espiras (fio 0.1mm)",
+                        "Amplificador de baixo ruído (AD620)",
+                        "Filtro passa-banda (frequência âncora 1.369 GHz)",
+                        "ESP32-S3 para processamento",
+                        "Display OLED para resultados"
+                    ],
+                    passos: [
+                        "1. Monte a bobina de detecção com 1000 espiras em núcleo de ferrite",
+                        "2. Conecte o sensor Hall à entrada do amplificador",
+                        "3. Programe o ESP32 para ler e filtrar os sinais",
+                        "4. Calibre o sistema com um campo magnético conhecido",
+                        "5. Teste em pontos de acupuntura (meridianos)",
+                        "6. Compare com banco de dados de padrões saudáveis"
+                    ]
+                },
+                score: 94
+            },
+            "transporte": {
+                titulo: "🚗 TRANSPORTE",
+                descricao: "Movimento de pessoas e cargas em todas as escalas geográficas.",
+                padroes: [
+                    "🌀 ESPIRAL (∞): Rotas logísticas otimizadas seguem padrões de espaço preenchido por φ",
+                    "📐 FUNIL (∇): Pontos de gargalo (congestionamento) são mínimos de fluxo",
+                    "⬛ QUADRADO: Redes de transporte (malha viária) seguem simetria quadrada/fractal",
+                    "🔗 EMARANHAMENTO: Conexão entre modais (terrestre, aéreo, marítimo) forma rede integrada"
+                ],
+                criterios: {
+                    escala: { status: "✅", texto: "Universal: Mobilidade local (bicicleta) a global (satélites)", cor: "#55ff55" },
+                    recursao: { status: "✅", texto: "Auto-similar: Congestionamento escala com população seguindo lei de potência", cor: "#55ff55" },
+                    hibrido: { status: "✅", texto: "Humano-autônomo: Fusão de veículos autônomos com infraestrutura inteligente", cor: "#55ff55" },
+                    consciencia: { status: "🟡", texto: "Agência: Sistemas de tráfego com aprendizado adaptativo", cor: "#ffaa55" },
+                    dados: { status: "✅", texto: "Baixa dependência: Padrões de fluxo são previsíveis com poucas variáveis", cor: "#55ff55" },
+                    causalidade: { status: "✅", texto: "Consistente: Leis da física determinam movimento", cor: "#55ff55" },
+                    relevancia: { status: "✅", texto: "Transversal: Conecta economia, urbanismo, meio ambiente", cor: "#55ff55" },
+                    empirico: { status: "✅", texto: "Testável: Simulações e protótipos validam inovações", cor: "#55ff55" }
+                },
+                projeto: {
+                    nome: "PROPULSOR Φ ANTIGRAVIDADE",
+                    descricao: "Motor eletromagnético que gera força de sustentação usando campos magnéticos oscilantes em ressonância φ (1.369 GHz).",
+                    componentes: [
+                        "Bobina primária: 5 espiras (fio 1.5mm)",
+                        "Bobina secundária: 8 espiras (fio 0.3mm)",
+                        "Capacitor de alta tensão (0.1µF / 1000V)",
+                        "Flyback de TV CRT",
+                        "ESP32-S3 com gerador PWM",
+                        "Ímãs de neodímio (N52) para campo base"
+                    ],
+                    passos: [
+                        "1. Enrole a bobina primária (5 espiras) com fio 1.5mm",
+                        "2. Enrole a bobina secundária (8 espiras, proporção áurea)",
+                        "3. Monte o capacitor em paralelo com o primário",
+                        "4. Conecte o flyback e ajuste o spark gap para 2-3mm",
+                        "5. Programe o ESP32 para pulsar na frequência 1.369 GHz",
+                        "6. Meça a variação de peso com uma balança de precisão"
+                    ]
+                },
+                score: 88
+            }
         };
         
-        function getNivelAtual() {
-            for (let i = estruturaCosmica.camadas.length - 1; i >= 0; i--) {
-                if (currentZoom >= estruturaCosmica.camadas[i].zoom_min) return estruturaCosmica.camadas[i];
-            }
-            return estruturaCosmica.camadas[0];
-        }
+        const genericAnalysis = {
+            titulo: "🔍 ANÁLISE GENÉRICA",
+            descricao: "Aplicação da Fórmula Φ para inovação em qualquer domínio.",
+            padroes: [
+                "🌀 ESPIRAL (∞): A estrutura analisada pode ser otimizada usando proporção áurea",
+                "📐 FUNIL (∇): Identificação de pontos críticos e mínimos de energia/informação",
+                "⬛ QUADRADO: Análise de simetrias e assimetrias fundamentais",
+                "🔗 EMARANHAMENTO: Conexões interdisciplinares e aplicações híbridas"
+            ],
+            criterios: {
+                escala: { status: "🟡", texto: "Potencial de aplicação em múltiplas escalas", cor: "#ffaa55" },
+                recursao: { status: "🟡", texto: "Possíveis padrões auto-similares detectados", cor: "#ffaa55" },
+                hibrido: { status: "🟡", texto: "Potencial de fusão com outras áreas", cor: "#ffaa55" },
+                consciencia: { status: "🟡", texto: "Possibilidade de sistemas adaptativos", cor: "#ffaa55" },
+                dados: { status: "🟡", texto: "Eficiência de aprendizado com poucos dados", cor: "#ffaa55" },
+                causalidade: { status: "🟡", texto: "Consistência das relações causa-efeito", cor: "#ffaa55" },
+                relevancia: { status: "🟡", texto: "Impacto potencial em múltiplos setores", cor: "#ffaa55" },
+                empirico: { status: "🟡", texto: "Testabilidade experimental", cor: "#ffaa55" }
+            },
+            projeto: {
+                nome: "PROJETO Φ PERSONALIZADO",
+                descricao: "Solução inovadora baseada nos princípios da Fórmula Φ, adaptada ao seu domínio de interesse.",
+                componentes: [
+                    "Sensor/atuador principal (especificar conforme domínio)",
+                    "ESP32-S3 para controle e processamento",
+                    "Fonte de energia (bateria/fonte externa)",
+                    "Interface de comunicação (Wi-Fi/Bluetooth)",
+                    "Estrutura de suporte (impressão 3D ou alumínio)"
+                ],
+                passos: [
+                    "1. Defina o problema específico que deseja resolver",
+                    "2. Aplique a proporção áurea (1.618) no design dos componentes",
+                    "3. Utilize a frequência âncora (1.369 GHz) para ressonância",
+                    "4. Implemente feedback loop para otimização contínua",
+                    "5. Teste e refine baseado nos resultados experimentais"
+                ]
+            },
+            score: 75
+        };
         
-        function redesenhar() {
-            if (!ctx) return;
-            const centerX = 350 + panX;
-            const centerY = 350 + panY;
-            const raioMax = 280;
-            
-            ctx.clearRect(0, 0, 700, 700);
-            ctx.fillStyle = "#010008";
-            ctx.fillRect(0, 0, 700, 700);
-            
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, 6, 0, 2 * Math.PI);
-            ctx.fillStyle = "#ffaa55";
-            ctx.fill();
-            ctx.fillStyle = "#ffaa55";
-            ctx.font = "bold 11px monospace";
-            ctx.fillText(estruturaCosmica.nome, centerX + 10, centerY - 6);
-            
-            for (let i = 0; i < estruturaCosmica.camadas.length; i++) {
-                const cam = estruturaCosmica.camadas[i];
-                const zoomAtivo = (currentZoom >= cam.zoom_min && currentZoom <= cam.zoom_max);
-                if (zoomAtivo && camadasVisivei_s[i] !== false) {
-                    const t = (currentZoom - cam.zoom_min) / (cam.zoom_max - cam.zoom_min);
-                    let raio = raioMax * cam.raio * (0.4 + t * 0.6);
-                    raio = Math.max(8, Math.min(raioMax - 10, raio));
-                    
-                    ctx.beginPath();
-                    ctx.arc(centerX, centerY, raio, 0, 2 * Math.PI);
-                    ctx.strokeStyle = cam.cor;
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                    ctx.fillStyle = cam.cor + "22";
-                    ctx.fill();
-                    
-                    ctx.font = `bold ${Math.max(10, Math.min(13, raio / 10))}px 'Segoe UI'`;
-                    ctx.fillStyle = cam.cor;
-                    ctx.fillText(cam.nome, centerX + raio + 8, centerY - 5);
-                    ctx.font = `italic 9px monospace`;
-                    ctx.fillStyle = "#aaaaff";
-                    ctx.fillText(cam.escala, centerX - raio - 70, centerY + 5);
+        async function buscarWikipedia(query) {
+            const url = `https://pt.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.title && data.extract) {
+                    return { titulo: data.title, extract: data.extract.substring(0, 250) };
                 }
+                return null;
+            } catch(e) { return null; }
+        }
+        
+        function getAnalysis(query) {
+            const lower = query.toLowerCase();
+            if (lower.includes("energ") || lower.includes("eletr") || lower.includes("potência") || lower.includes("luz")) {
+                return analysisMap["energia"];
+            }
+            if (lower.includes("saúd") || lower.includes("medic") || lower.includes("cura") || lower.includes("hospital") || lower.includes("doença")) {
+                return analysisMap["saúde"];
+            }
+            if (lower.includes("transport") || lower.includes("veículo") || lower.includes("carro") || lower.includes("avião") || lower.includes("navio")) {
+                return analysisMap["transporte"];
+            }
+            return genericAnalysis;
+        }
+        
+        function formatarCriterios(criterios) {
+            let html = '';
+            for (let [key, value] of Object.entries(criterios)) {
+                const nomeKey = {
+                    escala: "🌍 ESCALA",
+                    recursao: "🔄 RECURSÃO",
+                    hibrido: "🧬 HÍBRIDO",
+                    consciencia: "🧠 CONSCIÊNCIA",
+                    dados: "📊 DADOS",
+                    causalidade: "⚡ CAUSALIDADE",
+                    relevancia: "🎯 RELEVÂNCIA",
+                    empirico: "🔬 EMPÍRICO"
+                }[key] || key.toUpperCase();
+                
+                html += `
+                    <div class="criterio-item" style="border-left-color: ${value.cor};">
+                        <div class="criterio-nome" style="color: ${value.cor};">${value.status} ${nomeKey}</div>
+                        <div class="criterio-desc">${value.texto}</div>
+                    </div>
+                `;
+            }
+            return html;
+        }
+        
+        function formatarPadroes(padroes) {
+            return padroes.map(p => `<div style="margin-bottom: 6px;">${p}</div>`).join('');
+        }
+        
+        function formatarProjeto(projeto) {
+            return `
+                <div class="projeto-card">
+                    <div class="projeto-titulo">🚀 ${projeto.nome}</div>
+                    <div class="projeto-desc">${projeto.descricao}</div>
+                    <div class="projeto-componentes">
+                        <strong>🔧 COMPONENTES:</strong><br>
+                        ${projeto.componentes.map(c => `• ${c}<br>`).join('')}
+                    </div>
+                    <div class="projeto-componentes" style="margin-top: 8px;">
+                        <strong>📋 PASSO A PASSO:</strong><br>
+                        ${projeto.passos.map(p => `${p}<br>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function getScoreColor(score) {
+            if (score >= 85) return '#55ff55';
+            if (score >= 70) return '#ffaa55';
+            return '#ff5555';
+        }
+        
+        async function analisar() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+            
+            const loading = document.getElementById('loading');
+            loading.style.display = 'flex';
+            
+            try {
+                const wikiData = await buscarWikipedia(query);
+                const analysis = getAnalysis(query);
+                
+                document.getElementById('infoContent').innerHTML = `
+                    <strong>${analysis.titulo}</strong><br>
+                    📍 ${analysis.descricao}<br>
+                    🔍 Pesquisa: "${query}"<br>
+                    🌀 φ = ${PHI.toFixed(6)}
+                `;
+                
+                document.getElementById('padroesContent').innerHTML = formatarPadroes(analysis.padroes);
+                document.getElementById('criteriosContent').innerHTML = formatarCriterios(analysis.criterios);
+                document.getElementById('projetoContent').innerHTML = formatarProjeto(analysis.projeto);
+                document.getElementById('scoreContent').innerHTML = `
+                    <div style="text-align: center; padding: 10px;">
+                        <div style="font-size: 2rem; font-weight: bold; color: ${getScoreColor(analysis.score)};">${analysis.score}%</div>
+                        <div style="font-size: 0.6rem; margin-top: 5px;">Score de Inovação Φ</div>
+                        <div style="font-size: 0.55rem; margin-top: 8px;">Baseado nos 8 critérios da Fórmula Φ</div>
+                    </div>
+                `;
+                
+                if (wikiData) {
+                    document.getElementById('wikiContent').innerHTML = `
+                        <strong>📖 ${wikiData.titulo}</strong><br>
+                        ${wikiData.extract}...
+                    `;
+                } else {
+                    document.getElementById('wikiContent').innerHTML = `⚠️ Informação não encontrada na Wikipedia. Análise baseada na Fórmula Φ.`;
+                }
+                
+            } catch (error) {
+                document.getElementById('projetoContent').innerHTML = `<div style="color: #ff5555;">Erro na análise: ${error.message}</div>`;
             }
             
-            const nivel = getNivelAtual();
-            ctx.font = "bold 9px monospace";
-            ctx.fillStyle = "#ffdd99";
-            ctx.fillText(`📡 ${nivel.nome} | Zoom: ${Math.round(currentZoom)}% | φ = ${PHI.toFixed(6)}`, 15, 25);
-            ctx.font = "8px monospace";
-            ctx.fillStyle = "#88aaff";
-            ctx.fillText(`🖱️ Arraste para mover`, 15, 45);
+            loading.style.display = 'none';
         }
         
-        function renderizarCamadasPanel() {
-            const panel = document.getElementById('camadasPanel');
-            panel.innerHTML = '';
-            estruturaCosmica.camadas.forEach((cam, idx) => {
-                const div = document.createElement('div');
-                div.className = 'camada-item';
-                div.style.borderLeftColor = cam.cor;
-                const isVisible = camadasVisivei_s[idx] !== false;
-                div.innerHTML = `
-                    <div class="camada-header">
-                        <span class="camada-nome" style="color:${cam.cor};">${cam.nome}</span>
-                        <button class="camada-toggle ${isVisible ? 'active' : ''}" data-idx="${idx}">${isVisible ? '👁️' : '🔘'}</button>
-                    </div>
-                    <div class="camada-desc" id="desc-${idx}">${cam.desc}</div>
-                    <div class="camada-escala" id="escala-${idx}">📏 Escala: ${cam.escala} | Zoom: ${cam.zoom_min}%-${cam.zoom_max}%</div>
-                `;
-                const toggleBtn = div.querySelector('.camada-toggle');
-                toggleBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    camadasVisivei_s[idx] = !camadasVisivei_s[idx];
-                    toggleBtn.classList.toggle('active', camadasVisivei_s[idx]);
-                    toggleBtn.textContent = camadasVisivei_s[idx] ? '👁️' : '🔘';
-                    redesenhar();
-                };
-                const header = div.querySelector('.camada-header');
-                header.onclick = () => {
-                    document.getElementById(`desc-${idx}`).classList.toggle('visible');
-                    document.getElementById(`escala-${idx}`).classList.toggle('visible');
-                };
-                panel.appendChild(div);
-            });
-            const nivel = getNivelAtual();
-            document.getElementById('infoPanel').innerHTML = `<strong>🔬 ${nivel.nome}</strong><br>📍 ${nivel.desc}<br>📐 Escala: ${nivel.escala}<br>🔍 Zoom: ${Math.round(currentZoom)}% (0%=Universo, 100%=Sopa)<br>💡 ${nivel.detalhes.join(' | ')}`;
-        }
+        window.analisar = analisar;
         
-        function atualizarZoom() {
-            currentZoom = parseFloat(document.getElementById('zoomSlider').value);
-            const nivel = getNivelAtual();
-            document.getElementById('zoomValue').innerHTML = `${Math.round(currentZoom)}% - ${nivel.nome}`;
-            renderizarCamadasPanel();
-            redesenhar();
-        }
-        
-        window.resetZoom = function() {
-            document.getElementById('zoomSlider').value = '0';
-            currentZoom = 0;
-            panX = 0; panY = 0;
-            atualizarZoom();
-        };
-        
-        function initPan() {
-            const container = document.getElementById('canvasContainer');
-            container.onmousedown = (e) => {
-                isDragging = true;
-                dragStart = { x: e.clientX - panX, y: e.clientY - panY };
-                container.style.cursor = 'grabbing';
-            };
-            window.onmousemove = (e) => {
-                if (!isDragging) return;
-                panX = e.clientX - dragStart.x;
-                panY = e.clientY - dragStart.y;
-                redesenhar();
-            };
-            window.onmouseup = () => {
-                isDragging = false;
-                container.style.cursor = 'grab';
-            };
-        }
-        
-        canvas = document.getElementById('estruturaCanvas');
-        ctx = canvas.getContext('2d');
-        canvas.width = 700;
-        canvas.height = 700;
-        camadasVisivei_s = new Array(estruturaCosmica.camadas.length).fill(true);
-        
-        document.getElementById('zoomSlider').oninput = atualizarZoom;
-        initPan();
-        atualizarZoom();
-    })();
-</script>
+        analisar();
+    </script>
 </body>
 </html>
